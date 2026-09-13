@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Des petits jeux coopératifs à deux joueurs, où vous ne voyez pas la même chose. Aucun serveur, aucune inscription.">
+<meta name="theme-color" content="#0a0e1c">
+<title>Deux Écrans — jeux coop à 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="common/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230a0e1c'/%3E%3Crect x='8' y='18' width='24' height='30' rx='4' fill='%237c9cff'/%3E%3Crect x='34' y='24' width='24' height='30' rx='4' fill='%235be0c8'/%3E%3C/svg%3E">
+<style>
+  /* ---------------------------------------------------------------------
+     Le hub a son propre décor : deux halos qui se croisent, une trame fine,
+     et aucune des guirlandes d'ampoules du plateau télé.
+     --------------------------------------------------------------------- */
+  body.theme-hub {
+    --bg-0: #05070f;
+    --bg-1: #0b1122;
+    --bg-2: #161f3d;
+    --gold: #8fa8ff;
+    --gold-soft: #d7e1ff;
+    --gold-deep: #4257a8;
+    --teal: #5be0c8;
+    --ink: #eef1fb;
+    --ink-dim: #8d95b4;
+    --panel: rgba(12, 16, 32, 0.72);
+    --panel-line: rgba(143, 168, 255, 0.22);
+    background: radial-gradient(130% 100% at 50% -20%, var(--bg-2) 0%, var(--bg-1) 45%, var(--bg-0) 100%);
+  }
+
+  .halo {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(90px);
+    opacity: 0.5;
+    mix-blend-mode: screen;
+  }
+  .halo-a { width: 46vw; height: 46vw; left: -8vw; top: -6vh; background: #3d5bd8; animation: drift 34s ease-in-out infinite; }
+  .halo-b { width: 42vw; height: 42vw; right: -10vw; top: 14vh; background: #1e8f8a; animation: drift 41s ease-in-out infinite reverse; }
+  .halo-c { width: 34vw; height: 34vw; left: 30vw; bottom: -12vh; background: #6f3fa8; opacity: 0.35; animation: drift 48s ease-in-out infinite; }
+  @keyframes drift {
+    0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+    50%      { transform: translate3d(4vw, 5vh, 0) scale(1.12); }
+  }
+
+  .trame {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(143, 168, 255, 0.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(143, 168, 255, 0.07) 1px, transparent 1px);
+    background-size: 54px 54px;
+    mask-image: radial-gradient(80% 70% at 50% 30%, #000 5%, transparent 75%);
+    -webkit-mask-image: radial-gradient(80% 70% at 50% 30%, #000 5%, transparent 75%);
+  }
+
+  .theme-hub .logo h1 {
+    background: linear-gradient(180deg, #ffffff 0%, var(--gold-soft) 35%, var(--gold) 75%, var(--gold-deep) 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    text-shadow: 0 0 40px rgba(143, 168, 255, 0.28);
+  }
+
+  .intro { padding: 18px 22px; }
+  .intro p { margin: 0; text-align: center; color: var(--ink-dim); font-size: 0.95rem; line-height: 1.6; }
+  .intro b { color: var(--ink); font-weight: 600; }
+
+  .games { display: grid; gap: 14px; }
+
+  .game-card {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 16px;
+    align-items: start;
+    text-decoration: none;
+    color: inherit;
+    padding: 20px 22px;
+    overflow: hidden;
+    transition: transform 0.16s, border-color 0.2s, box-shadow 0.2s;
+  }
+  .game-card::after {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 3px;
+    background: var(--accent);
+    opacity: 0.8;
+  }
+  .game-card:hover {
+    transform: translateY(-3px);
+    border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+    box-shadow: var(--shadow), 0 0 40px -12px var(--accent);
+  }
+  .game-card .emoji {
+    font-size: 2.1rem;
+    line-height: 1;
+    width: 54px; height: 54px;
+    display: grid; place-items: center;
+    border-radius: 15px;
+    background: color-mix(in srgb, var(--accent) 16%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  }
+  .game-card h3 {
+    font-family: "Bebas Neue", Impact, sans-serif;
+    font-size: 1.85rem;
+    letter-spacing: 0.05em;
+    margin: 0 0 3px;
+    color: var(--ink);
+  }
+  .game-card .pitch { margin: 0 0 12px; color: var(--ink-dim); font-size: 0.93rem; line-height: 1.55; }
+  .game-card .tags { display: flex; gap: 7px; flex-wrap: wrap; }
+  .game-card .tag {
+    font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 4px 9px; border-radius: 999px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--ink-dim);
+  }
+  .game-card .tag.solo { border-color: color-mix(in srgb, var(--accent) 45%, transparent); color: var(--gold-soft); }
+
+  .card-mdp { --accent: #f5c451; }
+  .card-bombe { --accent: #ff5343; }
+  .card-laby { --accent: #5be0c8; }
+
+  @media (max-width: 480px) {
+    .game-card { grid-template-columns: 1fr; gap: 10px; padding: 18px 16px; }
+    .game-card .emoji { width: 46px; height: 46px; font-size: 1.8rem; }
+  }
+</style>
+</head>
+<body class="theme-hub">
+  <div class="decor" aria-hidden="true">
+    <div class="halo halo-a"></div>
+    <div class="halo halo-b"></div>
+    <div class="halo halo-c"></div>
+    <div class="trame"></div>
+    <div class="vignette"></div>
+  </div>
+
+  <main id="app" class="app">
+    <div class="logo">
+      <h1>Deux Écrans</h1>
+      <p>jeux coopératifs · 2 joueurs · chacun son écran</p>
+    </div>
+
+    <section class="panel intro">
+      <p>
+        Toujours la même idée : vous <b>ne voyez pas la même chose</b>, et il faut se parler pour
+        s'en sortir. Un joueur crée une room, envoie le code à l'autre, et c'est parti — aucune
+        inscription, aucun serveur, tout passe en direct entre vos deux navigateurs.
+      </p>
+    </section>
+
+    <div class="games">
+      <a class="panel game-card card-mdp" href="games/mot-de-passe/index.html">
+        <span class="emoji">🎙️</span>
+        <div>
+          <h3>Mot de Passe</h3>
+          <p class="pitch">
+            Le jeu télé, version coopérative. Tu fais deviner cinq mots à ton binôme avec un seul
+            mot d'indice, puis on inverse. Interdit d'utiliser le mot ni une de ses formes.
+          </p>
+          <div class="tags">
+            <span class="tag solo">Vocabulaire</span>
+            <span class="tag">Posé</span>
+            <span class="tag">~5 min</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="panel game-card card-bombe" href="games/desamorcage/index.html">
+        <span class="emoji">💣</span>
+        <div>
+          <h3>Désamorçage</h3>
+          <p class="pitch">
+            L'un a une bombe à l'écran, l'autre a le manuel — et personne ne voit l'écran de l'autre.
+            Fils à couper, séquences lumineuses, morse : il faut tout décrire à voix haute avant que
+            le chrono arrive à zéro.
+          </p>
+          <div class="tags">
+            <span class="tag solo">Tendu</span>
+            <span class="tag">On se parle vite</span>
+            <span class="tag">~5 min</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="panel game-card card-laby" href="games/labyrinthe/index.html">
+        <span class="emoji">🧭</span>
+        <div>
+          <h3>Labyrinthe</h3>
+          <p class="pitch">
+            L'un avance à l'aveugle, l'autre a le plan — mais ne sait pas où se trouve son binôme.
+            Il faut décrire les murs et les balises croisées pour se localiser, puis se faire guider
+            jusqu'à la sortie en évitant les pièges.
+          </p>
+          <div class="tags">
+            <span class="tag solo">Orientation</span>
+            <span class="tag">Calme</span>
+            <span class="tag">~6 min</span>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <div class="footer-note">
+      Code source ouvert · fonctionne hors ligne une fois la page chargée · rien n'est stocké.
+    </div>
+  </main>
+</body>
+</html>
