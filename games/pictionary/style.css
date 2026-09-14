@@ -1,0 +1,241 @@
+/* ============================================================
+   Pictionary — atelier, encre et néon
+   ============================================================ */
+
+body.theme-picto {
+  --bg-0: #07090f;
+  --bg-1: #101626;
+  --bg-2: #1b2438;
+  --gold: #ffc14d;
+  --gold-soft: #ffe0a3;
+  --gold-deep: #a9762a;
+  --teal: #63e6d2;
+  --bad: #ff6b6b;
+  --good: #6fe08a;
+  --ink: #eef2fb;
+  --ink-dim: #94a0bb;
+  --panel: rgba(16, 22, 38, 0.93);
+  --panel-line: rgba(255, 193, 77, 0.2);
+
+  --decor-art:
+    radial-gradient(46% 38% at 12% 8%, rgba(255, 193, 77, 0.15), transparent 62%),
+    radial-gradient(44% 38% at 90% 88%, rgba(99, 230, 210, 0.13), transparent 62%),
+    linear-gradient(180deg, #1b2438 0%, #101626 48%, #07090f 100%);
+  --grid-line: rgba(238, 242, 251, 0.035);
+  --grid-step: 36px;
+}
+
+/* ----------------------------------------------------------------- bandeau */
+.picto-hud { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+
+/* -------------------------------------------------------------- le mot / rôle */
+.word-line {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  margin-bottom: 12px;
+  text-align: center;
+}
+.word-line .kicker {
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+.word-line .the-word {
+  font-family: "Bebas Neue", Impact, sans-serif;
+  font-size: clamp(1.8rem, 7vw, 2.8rem);
+  line-height: 1;
+  letter-spacing: 0.06em;
+  color: var(--gold-soft);
+  text-shadow: 0 0 22px rgba(255, 193, 77, 0.35);
+}
+.word-line .pos {
+  font-size: 0.74rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+/* ------------------------------------------------------------------ canevas */
+.canvas-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.015)),
+    #141b2b;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+#pi-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: none;
+  cursor: crosshair;
+}
+.guess-side #pi-canvas { cursor: default; }
+
+/* voile de révélation entre deux mots */
+.reveal {
+  position: absolute;
+  inset: 0;
+  display: none;
+  place-items: center;
+  background: rgba(7, 9, 15, 0.82);
+  text-align: center;
+}
+.reveal.on { display: grid; }
+.reveal .rev-in { display: flex; flex-direction: column; gap: 6px; padding: 0 14px; }
+.reveal .rev-in span {
+  font-size: 0.76rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+.reveal .rev-in b {
+  font-family: "Bebas Neue", Impact, sans-serif;
+  font-size: clamp(2rem, 9vw, 3.2rem);
+  line-height: 1;
+  letter-spacing: 0.08em;
+}
+.reveal .rev-in.ok b { color: var(--good); }
+.reveal .rev-in.ko b { color: var(--bad); }
+
+/* ------------------------------------------------------------------- outils */
+.tools {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  margin-top: 12px;
+}
+.swatches, .widths { display: flex; align-items: center; gap: 7px; }
+
+.sw {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.18);
+  background: var(--sw, #fff);
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.1s, border-color 0.12s;
+}
+.sw:hover { transform: scale(1.1); }
+.sw.on { border-color: var(--gold); transform: scale(1.14); }
+.sw.eraser {
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--ink);
+  font-size: 0.85rem;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+}
+
+.wd {
+  width: 30px; height: 28px;
+  border-radius: 9px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  transition: border-color 0.12s, background 0.12s;
+}
+.wd.on { border-color: var(--gold); background: rgba(255, 193, 77, 0.14); }
+.wd i {
+  display: block;
+  width: var(--d, 8px); height: var(--d, 8px);
+  border-radius: 50%;
+  background: var(--ink);
+}
+
+.tool-actions { display: flex; gap: 12px; }
+
+/* -------------------------------------------------------------- propositions */
+.guesses {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  max-height: 92px;
+  overflow-y: auto;
+}
+.guesses li {
+  padding: 5px 11px;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+}
+.guesses li.wrong { color: var(--ink-dim); }
+.guesses li.right { color: var(--good); border-color: rgba(111, 224, 138, 0.45); background: rgba(111, 224, 138, 0.12); }
+.guesses li.empty { border: 0; background: none; color: var(--ink-dim); font-size: 0.84rem; padding-left: 2px; }
+.guesses.nudge { animation: nudge 0.4s ease-out; }
+@keyframes nudge {
+  0%, 100% { transform: none; }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+.entry { display: flex; gap: 10px; margin-top: 12px; }
+.entry input { flex: 1; }
+.drawer-actions { display: flex; gap: 10px; margin-top: 12px; }
+.drawer-actions .btn { flex: 1; }
+
+/* --------------------------------------------------------- nombre de lettres */
+.lettersbar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  width: 100%;
+  margin-top: 12px;
+  padding: 10px 16px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(99, 230, 210, 0.15), rgba(99, 230, 210, 0.05));
+  border: 1px solid rgba(99, 230, 210, 0.4);
+}
+.lettersbar .lb-num {
+  font-family: "Bebas Neue", Impact, sans-serif;
+  font-size: 2rem;
+  line-height: 1;
+  color: var(--teal);
+}
+.lettersbar .lb-cap {
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #bff3ec;
+}
+.lettersbar .lb-groups { display: flex; gap: 14px; flex-wrap: wrap; }
+.lettersbar .grp { display: flex; gap: 6px; }
+.lettersbar .grp i {
+  display: block;
+  width: 17px; height: 4px;
+  border-radius: 2px;
+  background: rgba(99, 230, 210, 0.85);
+}
+
+.mod-hint { text-align: center; color: var(--ink-dim); font-size: 0.8rem; margin: 14px 0 0; }
+
+@media (max-width: 480px) {
+  .canvas-wrap { aspect-ratio: 1 / 1; }
+  .tools { gap: 8px 12px; }
+  .sw { width: 24px; height: 24px; }
+  .wd { width: 26px; height: 24px; }
+  .guesses { max-height: 76px; }
+  .drawer-actions { flex-direction: column; }
+}

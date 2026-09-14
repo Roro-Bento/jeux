@@ -1,0 +1,167 @@
+/* ============================================================
+   Les différences — cabinet de curiosités, lumière froide
+   ============================================================ */
+
+body.theme-diff {
+  --bg-0: #060a10;
+  --bg-1: #0e1720;
+  --bg-2: #17242f;
+  --gold: #7fe3d0;
+  --gold-soft: #ccf6ee;
+  --gold-deep: #2f7a6d;
+  --teal: #7fe3d0;
+  --bad: #ff6b6b;
+  --good: #6fe08a;
+  --ink: #e9f1f4;
+  --ink-dim: #8ea3ad;
+  --panel: rgba(14, 23, 32, 0.93);
+  --panel-line: rgba(127, 227, 208, 0.2);
+
+  --decor-art:
+    radial-gradient(44% 38% at 14% 8%, rgba(127, 227, 208, 0.13), transparent 62%),
+    radial-gradient(46% 38% at 88% 86%, rgba(90, 140, 255, 0.12), transparent 62%),
+    linear-gradient(180deg, #17242f 0%, #0e1720 48%, #060a10 100%);
+  --grid-line: rgba(233, 241, 244, 0.035);
+  --grid-step: 34px;
+}
+
+.diff-hud { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+
+.lead { margin: 0 0 14px; text-align: center; color: var(--ink-dim); font-size: 0.92rem; line-height: 1.55; }
+.lead b { color: var(--ink); }
+
+/* ------------------------------------------------------------- la grille */
+.gd-frame { --lab: 18px; }
+.gd-cols {
+  display: grid;
+  grid-template-columns: repeat(var(--n, 5), 1fr);
+  margin-left: var(--lab);
+  gap: 6px;
+}
+.gd-main { display: flex; gap: 0; }
+.gd-rows {
+  display: flex;
+  flex-direction: column;
+  width: var(--lab);
+  gap: 6px;
+}
+.gd-cols span, .gd-rows span {
+  display: grid;
+  place-items: center;
+  font-family: "Share Tech Mono", ui-monospace, monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--ink-dim);
+}
+.gd-rows span { flex: 1; }
+.gd-cols { font-size: 0.72rem; }
+
+.gd-cells {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(var(--n, 5), 1fr);
+  gap: 6px;
+}
+/* les libellés de colonnes suivent la même grille */
+.gd-frame .gd-cols { grid-template-columns: repeat(var(--n, 5), 1fr); }
+
+.cell {
+  position: relative;
+  aspect-ratio: 1;
+  padding: 8%;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  background: rgba(255, 255, 255, 0.035);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: border-color 0.14s, background 0.14s, transform 0.1s;
+}
+.cell svg { width: 100%; height: 100%; display: block; }
+.cell:hover { border-color: rgba(127, 227, 208, 0.45); background: rgba(127, 227, 208, 0.07); }
+.cell:active { transform: scale(0.96); }
+
+.cell .tag {
+  position: absolute;
+  top: 3px; left: 5px;
+  font-family: "Share Tech Mono", ui-monospace, monospace;
+  font-size: 0.55rem;
+  font-style: normal;
+  color: var(--ink-dim);
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.cell.flag {
+  border-color: var(--gold);
+  background: rgba(127, 227, 208, 0.16);
+  box-shadow: inset 0 0 0 1px var(--gold);
+}
+.cell.found {
+  border-color: rgba(111, 224, 138, 0.6);
+  background: rgba(111, 224, 138, 0.14);
+  cursor: default;
+}
+.cell.found::after {
+  content: "✓";
+  position: absolute;
+  right: 4px; bottom: 2px;
+  font-size: 0.8rem;
+  color: var(--good);
+}
+.cell.missed {
+  border-color: rgba(255, 107, 107, 0.6);
+  background: rgba(255, 107, 107, 0.12);
+}
+
+/* ------------------------------------------------------------ l'ardoise */
+.status {
+  margin-top: 14px;
+  min-height: 42px;
+  display: grid;
+  place-items: center;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  text-align: center;
+  font-size: 0.92rem;
+}
+.status .st b { color: var(--gold-soft); font-family: "Share Tech Mono", ui-monospace, monospace; }
+.status .mine { color: var(--gold-soft); }
+.status .other { color: var(--ink); }
+.status .wait { color: #ffd452; }
+.status .idle { color: var(--ink-dim); }
+.status.nudge { animation: nudge 0.4s ease-out; }
+@keyframes nudge {
+  0%, 100% { transform: none; }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+#d-panel.ok { border-color: rgba(111, 224, 138, 0.55); }
+#d-panel.ko { border-color: rgba(255, 107, 107, 0.55); }
+
+/* ---------------------------------------------------------- débriefing */
+.compare { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 16px 0 6px; }
+.compare h3 {
+  margin: 0 0 8px;
+  font-size: 0.7rem; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--ink-dim); text-align: center;
+}
+.gd-frame.small .cell { border-radius: 8px; padding: 6%; }
+.gd-frame.small .cell .tag { display: none; }
+.gd-frame.small .cell:hover { border-color: rgba(255, 255, 255, 0.09); background: rgba(255, 255, 255, 0.035); }
+.gd-frame.small .cell.found { border-color: rgba(111, 224, 138, 0.6); background: rgba(111, 224, 138, 0.14); }
+
+.mod-hint { text-align: center; color: var(--ink-dim); font-size: 0.78rem; margin: 14px 0 0; }
+
+@media (max-width: 560px) {
+  .gd-frame { --lab: 14px; }
+  .gd-cells, .gd-cols { gap: 4px; }
+  .gd-rows { gap: 4px; }
+  .cell { border-radius: 9px; }
+  .cell .tag { font-size: 0.48rem; top: 2px; left: 3px; }
+  .compare { grid-template-columns: 1fr; }
+  .lead { font-size: 0.86rem; }
+}

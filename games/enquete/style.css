@@ -1,0 +1,170 @@
+/* ============================================================
+   L'enquête — bois sombre, laiton et papier jauni
+   ============================================================ */
+
+body.theme-enquete {
+  --bg-0: #0a0705;
+  --bg-1: #17110c;
+  --bg-2: #241a12;
+  --gold: #d8a657;
+  --gold-soft: #f3dcb0;
+  --gold-deep: #8a6428;
+  --teal: #8fbfae;
+  --bad: #e8675f;
+  --good: #79c98a;
+  --ink: #f0e7da;
+  --ink-dim: #a3927d;
+  --panel: rgba(23, 17, 12, 0.94);
+  --panel-line: rgba(216, 166, 87, 0.22);
+
+  --decor-art:
+    radial-gradient(44% 38% at 14% 6%, rgba(216, 166, 87, 0.15), transparent 62%),
+    radial-gradient(42% 36% at 88% 90%, rgba(143, 191, 174, 0.1), transparent 62%),
+    linear-gradient(180deg, #241a12 0%, #17110c 46%, #0a0705 100%);
+  --grid-line: rgba(240, 231, 218, 0.03);
+  --grid-step: 44px;
+}
+
+.enq-hud { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+
+.mini-title {
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin: 18px 0 8px;
+}
+
+.crime {
+  margin: 0 0 6px;
+  text-align: center;
+  color: var(--ink-dim);
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+.crime b { color: var(--gold-soft); }
+
+/* --------------------------------------------------------------- indices */
+.clues { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 7px; }
+.clues li {
+  position: relative;
+  padding: 10px 12px 10px 34px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.93rem;
+  line-height: 1.45;
+}
+.clues li::before {
+  content: "🔎";
+  position: absolute;
+  left: 11px; top: 9px;
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+/* ---------------------------------------------------------------- carnet */
+.carnet { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+.cr-head, .cr-row {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr 1fr 1fr;
+  gap: 6px;
+  align-items: center;
+}
+.cr-head span {
+  font-size: 0.64rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  padding-left: 2px;
+}
+.cr-row .who {
+  font-size: 0.88rem;
+  color: var(--gold-soft);
+  padding-right: 4px;
+  line-height: 1.2;
+}
+.cr-row .who i { display: block; font-size: 0.66rem; color: var(--bad); font-style: normal; letter-spacing: 0.1em; text-transform: uppercase; }
+
+.pick {
+  width: 100%;
+  padding: 9px 8px;
+  border-radius: 10px;
+  border: 1px solid rgba(216, 166, 87, 0.28);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.86rem;
+  cursor: pointer;
+  appearance: none;
+  text-align: center;
+}
+.pick:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 2px rgba(216, 166, 87, 0.22); }
+.pick:disabled { opacity: 0.65; cursor: default; }
+.pick option { background: #17110c; color: var(--ink); }
+
+.carnet.final .val {
+  padding: 9px 8px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.86rem;
+  text-align: center;
+}
+.carnet.final .cr-row.culprit .val {
+  border-color: rgba(232, 103, 95, 0.5);
+  background: rgba(232, 103, 95, 0.12);
+}
+
+/* ------------------------------------------------------------ accusation */
+.deal {
+  margin-top: 16px;
+  padding: 14px;
+  border-radius: 16px;
+  border: 1px solid var(--panel-line);
+  background: rgba(216, 166, 87, 0.07);
+}
+.deal p { margin: 0; font-size: 0.92rem; line-height: 1.5; color: var(--ink-dim); }
+.deal b { color: var(--gold-soft); }
+.deal.theirs { border-color: rgba(143, 191, 174, 0.4); background: rgba(143, 191, 174, 0.08); }
+
+.st {
+  display: block;
+  margin-top: 12px;
+  text-align: center;
+  font-size: 0.92rem;
+}
+.st.wait { color: var(--bad); }
+.st.good { color: var(--good); }
+
+/* ------------------------------------------------------------ débriefing */
+.verdict { text-align: center; font-size: 1.05rem; margin: 6px 0 14px; color: var(--ink-dim); }
+.verdict b { font-size: 1.25rem; }
+.verdict.ok b { color: var(--good); }
+.verdict.ko b { color: var(--bad); }
+
+.clue-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.clue-cols h4 {
+  margin: 0 0 8px;
+  font-size: 0.66rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+.mod-hint { text-align: center; color: var(--ink-dim); font-size: 0.78rem; margin: 16px 0 0; }
+
+@media (max-width: 620px) {
+  .cr-head, .cr-row { grid-template-columns: 1fr; gap: 4px; }
+  .cr-head { display: none; }
+  .cr-row {
+    padding: 10px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    margin-bottom: 2px;
+  }
+  .cr-row .who { font-size: 0.95rem; margin-bottom: 4px; }
+  .pick { text-align: left; }
+  .clue-cols { grid-template-columns: 1fr; }
+}

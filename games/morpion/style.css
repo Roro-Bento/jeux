@@ -1,0 +1,179 @@
+/* ============================================================
+   Morpion — ardoise et craie
+   ============================================================ */
+
+body.theme-morpion {
+  --bg-0: #060910;
+  --bg-1: #0c1018;
+  --bg-2: #172130;
+  --gold: #ffb27a;
+  --gold-soft: #ffe0c8;
+  --gold-deep: #b4653a;
+  --teal: #54d6e8;
+  --bad: #ff6b6b;
+  --good: #66e0a3;
+  --ink: #eef2f8;
+  --ink-dim: #8e9ab0;
+  --panel: rgba(14, 19, 28, 0.92);
+  --panel-line: rgba(207, 216, 230, 0.16);
+
+  --x: #ff9052;
+  --o: #54d6e8;
+  --chalk: rgba(207, 216, 230, 0.34);
+
+  --decor-art:
+    radial-gradient(46% 40% at 14% 8%, rgba(255, 144, 82, 0.16), transparent 62%),
+    radial-gradient(44% 38% at 88% 90%, rgba(84, 214, 232, 0.14), transparent 62%),
+    linear-gradient(180deg, #172130 0%, #0c1018 45%, #060910 100%);
+  --grid-line: rgba(207, 216, 230, 0.045);
+  --grid-step: 44px;
+}
+
+.m-x { color: var(--x); }
+.m-o { color: var(--o); }
+
+/* ---------------------------------------------------------------- bandeau */
+.morpion-hud {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 10px;
+}
+.side { display: flex; align-items: center; gap: 8px; font-size: 0.82rem; color: var(--ink-dim); }
+.side-o { justify-content: flex-end; }
+.side .mk { font-size: 1.3rem; line-height: 1; }
+.side .who { max-width: 9ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.side b {
+  font-family: "Bebas Neue", Impact, sans-serif;
+  font-size: 1.7rem;
+  color: var(--ink);
+  letter-spacing: 0.04em;
+}
+.morpion-hud .mid { text-align: center; }
+
+.turn-line {
+  text-align: center;
+  font-size: 1rem;
+  margin-bottom: 14px;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.turn-line .mk { font-size: 1.3rem; line-height: 1; }
+.turn-line .wait { color: var(--ink-dim); }
+
+/* ---------------------------------------------------------------- plateau */
+.board-wrap { display: flex; justify-content: center; }
+
+.grid.classic {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  width: min(360px, 82vw);
+}
+.grid.classic .cell {
+  aspect-ratio: 1;
+  border-radius: 16px;
+  border: 1px solid var(--chalk);
+  background: rgba(255, 255, 255, 0.03);
+  font-size: clamp(2.2rem, 11vw, 3.4rem);
+  line-height: 1;
+  color: var(--ink);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: background 0.14s, border-color 0.14s, transform 0.08s;
+}
+.grid.classic .cell:not([disabled]):hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--gold);
+}
+.grid.classic .cell:not([disabled]):active { transform: scale(0.97); }
+.cell[disabled] { cursor: default; }
+.cell.m-x span { color: var(--x); }
+.cell.m-o span { color: var(--o); }
+.cell.winline { background: rgba(102, 224, 163, 0.16); border-color: var(--good); }
+
+/* super morpion */
+.grid.ultimate {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 7px;
+  width: min(420px, 92vw);
+}
+.mini {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  padding: 4px;
+  border-radius: 10px;
+  border: 1px solid rgba(207, 216, 230, 0.14);
+  background: rgba(255, 255, 255, 0.02);
+  opacity: 0.55;
+  transition: opacity 0.16s, border-color 0.16s, background 0.16s;
+}
+.mini.playable { opacity: 1; }
+.mini.target {
+  border-color: var(--gold);
+  background: rgba(255, 178, 122, 0.10);
+  box-shadow: 0 0 0 1px rgba(255, 178, 122, 0.4);
+}
+.mini.won, .mini.tied { opacity: 1; }
+.mini.won.m-x { background: rgba(255, 144, 82, 0.12); border-color: rgba(255, 144, 82, 0.45); }
+.mini.won.m-o { background: rgba(84, 214, 232, 0.12); border-color: rgba(84, 214, 232, 0.45); }
+.mini.winline { box-shadow: 0 0 0 2px var(--good), 0 0 22px rgba(102, 224, 163, 0.35); }
+.mini .cell {
+  aspect-ratio: 1;
+  border: 0;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.045);
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--ink);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  padding: 0;
+}
+.mini .cell:not([disabled]):hover { background: rgba(255, 178, 122, 0.25); }
+.mini .cell[disabled] { cursor: default; }
+.mini-mark {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 3rem;
+  line-height: 1;
+  pointer-events: none;
+  opacity: 0.55;
+}
+.mini.won.m-x .mini-mark { color: var(--x); }
+.mini.won.m-o .mini-mark { color: var(--o); }
+.mini-mark.tie { color: var(--ink-dim); font-size: 2rem; opacity: 0.5; }
+
+.board-wrap.frozen .cell { pointer-events: none; }
+
+/* ------------------------------------------------------------------ récaps */
+.score-line {
+  display: flex; align-items: center; justify-content: center; gap: 14px;
+  font-size: 1rem; margin-bottom: 14px;
+}
+.score-line b { font-family: "Bebas Neue", Impact, sans-serif; font-size: 1.6rem; }
+.score-line .sep { color: var(--ink-dim); }
+
+.final-score {
+  display: flex; align-items: center; justify-content: center; gap: 18px;
+  font-family: "Bebas Neue", Impact, sans-serif;
+  font-size: clamp(3rem, 16vw, 5rem);
+  line-height: 1;
+}
+.final-score .dash { color: var(--ink-dim); }
+
+.mod-hint { text-align: center; color: var(--ink-dim); font-size: 0.82rem; margin: 16px 0 0; }
+
+@media (max-width: 480px) {
+  .side .who { max-width: 6ch; }
+  .grid.ultimate { gap: 5px; }
+  .mini { padding: 3px; gap: 1px; }
+  .mini-mark { font-size: 2.2rem; }
+}

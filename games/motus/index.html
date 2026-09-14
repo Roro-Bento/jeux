@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Motus à deux joueurs, en ligne : deux mots, deux tableaux qui s'échangent à chaque tour, et un dernier mot à faire tomber ensemble.">
+<meta name="theme-color" content="#04070f">
+<title>Motus en duo — à deux</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../common/style.css">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2304070f'/%3E%3Crect x='8' y='14' width='22' height='16' rx='4' fill='%233fb96a'/%3E%3Crect x='34' y='14' width='22' height='16' rx='4' fill='%23e8a93a'/%3E%3Crect x='8' y='34' width='22' height='16' rx='4' fill='%232a3457'/%3E%3Crect x='34' y='34' width='22' height='16' rx='4' fill='%233fb96a'/%3E%3C/svg%3E">
+</head>
+<body class="theme-motus">
+  <div class="decor" aria-hidden="true">
+    <div class="grid-overlay"></div>
+    <div class="vignette"></div>
+  </div>
+
+  <main id="app" class="app"></main>
+
+  <script src="../../common/rng.js"></script>
+  <script src="words.js"></script>
+  <script src="engine.js"></script>
+  <script src="../../common/net.js"></script>
+  <script src="../../common/room.js"></script>
+  <script src="board.js"></script>
+</body>
+</html>

@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Neuf petits jeux à deux joueurs, où vous ne voyez pas la même chose : mot de passe, désamorçage, labyrinthe, pictionary, pendu, morpion, les différences, motus, l'enquête. Aucun serveur, aucune inscription.">
+<meta name="theme-color" content="#0a0e1c">
+<title>Deux Écrans — neuf jeux à 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="common/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230a0e1c'/%3E%3Crect x='8' y='18' width='24' height='30' rx='4' fill='%237c9cff'/%3E%3Crect x='34' y='24' width='24' height='30' rx='4' fill='%235be0c8'/%3E%3C/svg%3E">
+<style>
+  /* ---------------------------------------------------------------------
+     Le hub a son propre décor. Comme partout sur le site, il est peint une
+     seule fois : que des dégradés, aucun filtre ni animation de fond.
+     --------------------------------------------------------------------- */
+  body.theme-hub {
+    --bg-0: #05070f;
+    --bg-1: #0b1122;
+    --bg-2: #161f3d;
+    --gold: #8fa8ff;
+    --gold-soft: #d7e1ff;
+    --gold-deep: #4257a8;
+    --teal: #5be0c8;
+    --ink: #eef1fb;
+    --ink-dim: #8d95b4;
+    --panel: rgba(12, 16, 32, 0.92);
+    --panel-line: rgba(143, 168, 255, 0.22);
+
+    --decor-art:
+      radial-gradient(48% 42% at 12% 6%, rgba(61, 91, 216, 0.34), transparent 62%),
+      radial-gradient(44% 38% at 90% 20%, rgba(30, 143, 138, 0.26), transparent 62%),
+      radial-gradient(52% 40% at 52% 104%, rgba(111, 63, 168, 0.24), transparent 64%),
+      linear-gradient(180deg, #161f3d 0%, #0b1122 45%, #05070f 100%);
+    --grid-line: rgba(143, 168, 255, 0.055);
+    --grid-step: 54px;
+  }
+
+  .theme-hub .logo h1 {
+    background: linear-gradient(180deg, #ffffff 0%, var(--gold-soft) 35%, var(--gold) 75%, var(--gold-deep) 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    text-shadow: 0 0 40px rgba(143, 168, 255, 0.28);
+  }
+
+  .intro { padding: 18px 22px; }
+  .intro p { margin: 0; text-align: center; color: var(--ink-dim); font-size: 0.95rem; line-height: 1.6; }
+  .intro b { color: var(--ink); font-weight: 600; }
+
+  /* --- le sélecteur d'affichage ------------------------------------- */
+  .view-switch {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    margin: -4px 2px 0;
+  }
+  .view-switch .vs-lab {
+    margin-right: auto;
+    font-size: 0.7rem; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--ink-dim);
+  }
+  .view-switch button {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--ink-dim);
+    font: inherit;
+    font-size: 0.78rem;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+  }
+  .view-switch button:hover { color: var(--ink); border-color: var(--panel-line); }
+  .view-switch button[aria-pressed="true"] {
+    color: var(--gold-soft);
+    border-color: color-mix(in srgb, var(--gold) 55%, transparent);
+    background: color-mix(in srgb, var(--gold) 14%, transparent);
+  }
+  .view-switch .ic { font-size: 0.9rem; line-height: 1; }
+
+  /* --- la grille ------------------------------------------------------
+     Par défaut : des cartes compactes, tout tient sans défiler. La vue
+     détaillée ne fait que rendre la même carte à son ancienne taille. */
+  .games { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(206px, 1fr)); }
+  .games.detailed { grid-template-columns: 1fr; gap: 14px; }
+
+  .game-card {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+    gap: 10px;
+    align-content: start;
+    text-decoration: none;
+    color: inherit;
+    padding: 18px 14px 16px;
+    overflow: hidden;
+    transition: transform 0.16s, border-color 0.2s, box-shadow 0.2s;
+  }
+  .game-card::after {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 3px;
+    background: var(--accent);
+    opacity: 0.8;
+  }
+  .games:not(.detailed) .game-card .pitch { display: none; }
+  .games:not(.detailed) .game-card .tag.mood { display: none; }
+  .games:not(.detailed) .game-card h3 { font-size: 1.5rem; }
+
+  .games.detailed .game-card {
+    grid-template-columns: auto 1fr;
+    justify-items: stretch;
+    text-align: left;
+    gap: 16px;
+    align-items: start;
+    padding: 20px 22px;
+  }
+  .games.detailed .game-card::after { inset: 0 auto 0 0; width: 3px; height: auto; }
+  .games.detailed .game-card .tags { justify-content: flex-start; }
+  .game-card:hover {
+    transform: translateY(-3px);
+    border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+    box-shadow: var(--shadow), 0 0 40px -12px var(--accent);
+  }
+  .game-card .emoji {
+    font-size: 2.1rem;
+    line-height: 1;
+    width: 54px; height: 54px;
+    display: grid; place-items: center;
+    border-radius: 15px;
+    background: color-mix(in srgb, var(--accent) 16%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  }
+  .game-card h3 {
+    font-family: "Bebas Neue", Impact, sans-serif;
+    font-size: 1.85rem;
+    letter-spacing: 0.05em;
+    margin: 0 0 3px;
+    color: var(--ink);
+  }
+  .game-card .pitch { margin: 0 0 12px; color: var(--ink-dim); font-size: 0.93rem; line-height: 1.55; }
+  .game-card .tags { display: flex; gap: 7px; flex-wrap: wrap; justify-content: center; }
+  .game-card .tag {
+    font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 4px 9px; border-radius: 999px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--ink-dim);
+  }
+  .game-card .tag.solo { border-color: color-mix(in srgb, var(--accent) 45%, transparent); color: var(--gold-soft); }
+
+  .card-mdp { --accent: #f5c451; }
+  .card-bombe { --accent: #ff5343; }
+  .card-laby { --accent: #5be0c8; }
+  .card-picto { --accent: #c88bff; }
+  .card-pendu { --accent: #e3c08a; }
+  .card-morpion { --accent: #ff9052; }
+  .card-diff { --accent: #7fe3d0; }
+  .card-motus { --accent: #3fb96a; }
+  .card-enquete { --accent: #d8a657; }
+
+  @media (max-width: 480px) {
+    .games { grid-template-columns: repeat(auto-fill, minmax(146px, 1fr)); gap: 10px; }
+    .games:not(.detailed) .game-card { padding: 14px 10px 12px; gap: 8px; }
+    .games:not(.detailed) .game-card h3 { font-size: 1.25rem; }
+    .games:not(.detailed) .game-card .emoji { width: 42px; height: 42px; font-size: 1.6rem; }
+    .games:not(.detailed) .game-card .tag { font-size: 0.6rem; padding: 3px 7px; }
+    .games.detailed .game-card {
+      grid-template-columns: 1fr; justify-items: center; text-align: center;
+      gap: 10px; padding: 18px 16px;
+    }
+    .games.detailed .game-card .tags { justify-content: center; }
+    .game-card .emoji { width: 46px; height: 46px; font-size: 1.8rem; }
+  }
+</style>
+</head>
+<body class="theme-hub">
+  <div class="decor" aria-hidden="true">
+    <div class="grid-overlay"></div>
+    <div class="vignette"></div>
+  </div>
+
+  <main id="app" class="app">
+    <div class="logo">
+      <h1>Deux Écrans</h1>
+      <p>neuf jeux · 2 joueurs · chacun son écran</p>
+    </div>
+
+    <section class="panel intro">
+      <p>
+        Toujours la même idée : vous <b>ne voyez pas la même chose</b>, et il faut se parler pour
+        s'en sortir. Huit jeux où vous êtes dans la même équipe, un où vous vous affrontez.
+        Un joueur crée une room, envoie le code à l'autre, et c'est parti — aucune
+        inscription, aucun serveur, tout passe en direct entre vos deux navigateurs.
+      </p>
+    </section>
+
+    <div class="view-switch">
+      <span class="vs-lab">Affichage</span>
+      <button type="button" id="v-grid" aria-pressed="true" aria-label="Affichage compact en grille">
+        <span class="ic" aria-hidden="true">▦</span>Compact
+      </button>
+      <button type="button" id="v-list" aria-pressed="false" aria-label="Affichage détaillé, une carte par ligne">
+        <span class="ic" aria-hidden="true">☰</span>Détails
+      </button>
+    </div>
+
+    <div class="games" id="games">
+      <a class="panel game-card card-mdp" href="games/mot-de-passe/index.html">
+        <span class="emoji">🎙️</span>
+        <div>
+          <h3>Mot de Passe</h3>
+          <p class="pitch">
+            Le jeu télé, version coopérative. Tu fais deviner cinq mots à ton binôme avec un seul
+            mot d'indice, puis on inverse. Interdit d'utiliser le mot ni une de ses formes.
+          </p>
+          <div class="tags">
+            <span class="tag solo">Vocabulaire</span>
+            <span class="tag mood">Posé</span>
+            <span class="tag">~5 min</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="panel game-card card-bombe" href="games/desamorcage/index.html">
+        <span class="emoji">💣</span>
+        <div>
+          <h3>Désamorçage</h3>
+          <p class="pitch">
+            L'un a une bombe à l'écran, l'autre a le manuel — et personne ne voit l'écran de l'autre.
+            Fils à couper, séquences lumineuses, morse : il faut tout décrire à voix haute avant que
+            le chrono arrive à zéro.
+          </p>
+          <div class="tags">
+            <span class="tag solo">Tendu</span>
+            <span class="tag mood">On se parle vite</span>
+            <span class="tag">~5 min</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="panel game-card card-laby" href="games/labyrinthe/index.html">
+        <span class="emoji">🧭</span>
+        <div>
+          <h3>Labyrinthe</h3>
+          <p class="pitch">
+            L'un avance à l'aveugle, l'autre a le plan — mais ne sait pas où se trouve son binôme.
+            Il faut décrire les murs et les balises croisées pour se localiser, puis se faire guider
+            jusqu'à la sortie en évitant les pièges.
+          </p>
+          <div class="tags">
+            <span class="tag solo">Orientation</span>
+            <span class="tag mood">Calme</span>
+            <span class="tag">~6 min</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="panel game-card card-picto" href="games/pictionary/index.html">
+        <span class="emoji">🖌️</span>
+        <div>
+          <h3>Pictionary</h3>
+          <p class="pitch">
+            Un mot, un canevas partagé, et zéro lettre autorisée. Le dessinateur voit son trait
+            apparaître en direct chez son binôme, et lit ses propositions au fur et à mesure —
+            puis on inverse les rôles.
+          </p>
+          <div class="tags">
+            <span class="tag solo">Dessin</span>
+            <span class="tag mood">Ça rigole</span>
+            <span class="tag">~8 min</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="panel game-card card-pendu" href="games/pendu/index.html">
+        <span class="emoji">🪢</span>
+        <div>
+          <h3>Pendu</h3>
+          <p class="pitch">
+            L'un choisit le mot (ou en pioche un au hasard), l'autre le devine lettre par lettre
+            avant que le bonhomme soit complet. Puis on échange. Le score, c'est le nombre de mots
+            sauvés à deux.
+          </p>
+          <div class="tags">
+            <span class="tag solo">Vocabulaire</span>
+            <span class="tag mood">Posé</span>
+            <span class="tag">~5 min</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="panel game-card card-morpion" href="games/morpion/index.html">
+        <span class="emoji">⭕</span>
+        <div>
+          <h3>Morpion</h3>
+          <p class="pitch">
+            Le seul duel de la maison. Version classique, ou <b>super morpion</b> : neuf grilles
+            imbriquées où ton coup décide de la grille dans laquelle l'autre devra jouer. Série de
+            manches, avec l'honneur de commencer qui alterne.
+          </p>
+          <div class="tags">
+            <span class="tag solo">Duel</span>
+            <span class="tag mood">Tactique</span>
+            <span class="tag">~5 min</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="panel game-card card-diff" href="games/differences/index.html">
+        <span class="emoji">🔷</span>
+        <div>
+          <h3>Les différences</h3>
+          <p class="pitch">
+            Vos deux grilles de formes sont presque identiques. Presque. Personne ne voit l'écran de
+            l'autre : il faut décrire, se mettre d'accord sur une case, et cliquer la même tous les
+            deux pour valider une différence.
+          </p>
+          <div class="tags">
+            <span class="tag solo">Observation</span>
+            <span class="tag mood">On se décrit tout</span>
+            <span class="tag dur">~4 min</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="panel game-card card-motus" href="games/motus/index.html">
+        <span class="emoji">🟩</span>
+        <div>
+          <h3>Motus en duo</h3>
+          <p class="pitch">
+            Deux mots, deux tableaux. Quand vous avez proposé tous les deux, les tableaux
+            s'échangent : tu continues sur le mot de ton binôme. Le dernier mot debout, vous le
+            cherchez ensemble, chacun son tour.
+          </p>
+          <div class="tags">
+            <span class="tag solo">Vocabulaire</span>
+            <span class="tag mood">Ça réfléchit</span>
+            <span class="tag dur">~7 min</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="panel game-card card-enquete" href="games/enquete/index.html">
+        <span class="emoji">🔎</span>
+        <div>
+          <h3>L'enquête</h3>
+          <p class="pitch">
+            Qui était où, avec quoi, à quelle heure ? Vous avez chacun la moitié des indices, et
+            aucun des deux ne peut conclure seul — c'est garanti par construction. Pour accuser, il
+            faut être d'accord.
+          </p>
+          <div class="tags">
+            <span class="tag solo">Déduction</span>
+            <span class="tag mood">Cérébral</span>
+            <span class="tag dur">~10 min</span>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <div class="footer-note" id="foot">
+      Code source ouvert · fonctionne hors ligne une fois la page chargée · rien n'est stocké.
+    </div>
+  </main>
+
+  <script>
+    /* Choix de l'affichage. Compact par défaut : les six jeux tiennent sans
+       défiler. Le choix est retenu dans ce navigateur — et si le stockage est
+       refusé (navigation privée, cookies bloqués), on retombe simplement sur
+       le compact sans rien casser. */
+    (function () {
+      var KEY = 'deux-ecrans:vue';
+      var games = document.getElementById('games');
+      var bGrid = document.getElementById('v-grid');
+      var bList = document.getElementById('v-list');
+
+      function apply(mode, remember) {
+        var detailed = mode === 'detailed';
+        games.classList.toggle('detailed', detailed);
+        bGrid.setAttribute('aria-pressed', detailed ? 'false' : 'true');
+        bList.setAttribute('aria-pressed', detailed ? 'true' : 'false');
+        if (remember) { try { localStorage.setItem(KEY, mode); } catch (e) {} }
+      }
+
+      var saved = null;
+      try { saved = localStorage.getItem(KEY); } catch (e) {}
+      apply(saved === 'detailed' ? 'detailed' : 'compact', false);
+
+      bGrid.addEventListener('click', function () { apply('compact', true); });
+      bList.addEventListener('click', function () { apply('detailed', true); });
+    })();
+  </script>
+</body>
+</html>

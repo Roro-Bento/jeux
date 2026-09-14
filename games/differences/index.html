@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Les différences à deux joueurs, en ligne : chacun sa grille, presque la même, et il faut se décrire ce qu'on voit pour trouver ce qui cloche.">
+<meta name="theme-color" content="#060a10">
+<title>Les différences — à deux</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../common/style.css">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23060a10'/%3E%3Ccircle cx='21' cy='23' r='9' fill='%237fe3d0'/%3E%3Ccircle cx='43' cy='23' r='9' fill='none' stroke='%237fe3d0' stroke-width='3'/%3E%3Crect x='13' y='38' width='16' height='16' rx='3' fill='%23ff9a4d'/%3E%3Crect x='35' y='38' width='16' height='16' rx='3' fill='%23c08bff'/%3E%3C/svg%3E">
+</head>
+<body class="theme-diff">
+  <div class="decor" aria-hidden="true">
+    <div class="grid-overlay"></div>
+    <div class="vignette"></div>
+  </div>
+
+  <main id="app" class="app"></main>
+
+  <script src="../../common/rng.js"></script>
+  <script src="scene.js"></script>
+  <script src="engine.js"></script>
+  <script src="../../common/net.js"></script>
+  <script src="../../common/room.js"></script>
+  <script src="board.js"></script>
+</body>
+</html>

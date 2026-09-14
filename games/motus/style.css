@@ -1,0 +1,162 @@
+/* ============================================================
+   Motus en duo — plateau de télé, lettres blanches sur fond bleu
+   ============================================================ */
+
+body.theme-motus {
+  --bg-0: #04070f;
+  --bg-1: #0a1224;
+  --bg-2: #122043;
+  --gold: #ffd452;
+  --gold-soft: #ffeaa8;
+  --gold-deep: #9c7420;
+  --teal: #5ad2ff;
+  --bad: #ff6b6b;
+  --good: #6fe08a;
+  --ink: #eaf0ff;
+  --ink-dim: #93a0c4;
+  --panel: rgba(10, 18, 36, 0.93);
+  --panel-line: rgba(255, 212, 82, 0.2);
+
+  --ok: #3fb96a;      /* bien placée */
+  --pos: #e8a93a;     /* présente, mal placée */
+  --nope: #2a3457;    /* absente */
+
+  --decor-art:
+    radial-gradient(46% 40% at 16% 6%, rgba(90, 210, 255, 0.16), transparent 62%),
+    radial-gradient(44% 38% at 86% 90%, rgba(255, 212, 82, 0.12), transparent 62%),
+    linear-gradient(180deg, #122043 0%, #0a1224 48%, #04070f 100%);
+  --grid-line: rgba(234, 240, 255, 0.04);
+  --grid-step: 38px;
+}
+
+.motus-hud { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+
+.mtitle {
+  text-align: center;
+  color: var(--ink-dim);
+  font-size: 0.86rem;
+  margin-bottom: 12px;
+  min-height: 1.2em;
+}
+.mtitle b { color: var(--gold-soft); }
+
+/* -------------------------------------------------------------- le tableau */
+.mgrid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: center;
+}
+.mrow {
+  display: grid;
+  grid-template-columns: repeat(var(--len, 6), 1fr);
+  gap: 6px;
+  width: 100%;
+  max-width: calc(var(--len, 6) * 62px);
+}
+.tile {
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  border: 2px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.03);
+  font-family: "Bebas Neue", Impact, sans-serif;
+  font-size: clamp(1.3rem, 6vw, 2.1rem);
+  line-height: 1;
+  color: var(--ink);
+  letter-spacing: 0.04em;
+}
+.tile.typed { border-color: rgba(255, 255, 255, 0.4); }
+.tile.given { color: var(--gold-soft); border-color: rgba(255, 212, 82, 0.45); }
+.tile.caret { border-color: var(--gold); box-shadow: inset 0 0 0 1px var(--gold); }
+.tile.ok { background: var(--ok); border-color: var(--ok); color: #fff; }
+.tile.pos { background: var(--pos); border-color: var(--pos); color: #241a02; }
+.tile.no { background: var(--nope); border-color: var(--nope); color: #8290bb; }
+.mrow.empty .tile { opacity: 0.45; }
+
+/* ---------------------------------------------------------------- ardoise */
+.status {
+  margin: 14px 0 12px;
+  min-height: 40px;
+  display: grid;
+  place-items: center;
+  padding: 9px 14px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  text-align: center;
+  font-size: 0.92rem;
+}
+.status .mine { color: var(--gold-soft); }
+.status .other { color: var(--ink-dim); }
+.status .wait { color: var(--bad); }
+.status .good { color: var(--good); }
+.status b { color: var(--gold); }
+
+/* --------------------------------------------------------------- clavier */
+.kb { display: flex; flex-direction: column; gap: 6px; }
+.kb-row { display: flex; gap: 5px; justify-content: center; }
+.kb .key {
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 11px 0;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.12s, transform 0.08s, border-color 0.12s;
+}
+.kb .key:hover { background: rgba(255, 255, 255, 0.12); }
+.kb .key:active { transform: scale(0.94); }
+.kb .key.wide { flex: 1.6 1 0; font-size: 0.78rem; }
+.kb .key.ok { background: var(--ok); border-color: var(--ok); color: #fff; }
+.kb .key.pos { background: var(--pos); border-color: var(--pos); color: #241a02; }
+.kb .key.no { background: rgba(42, 52, 87, 0.9); border-color: transparent; color: #74809f; }
+
+/* ------------------------------------------------------------ débriefing */
+.res { margin-top: 18px; }
+.res-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  margin-bottom: 10px;
+}
+.res-who { font-size: 0.7rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-dim); }
+.res-word {
+  font-family: "Bebas Neue", Impact, sans-serif;
+  font-size: 1.7rem;
+  letter-spacing: 0.1em;
+}
+.res-word.ok { color: var(--good); }
+.res-word.ko { color: var(--bad); }
+.res-meta { font-size: 0.78rem; color: var(--ink-dim); }
+
+.mgrid.small .mrow { max-width: calc(var(--len, 6) * 40px + 90px); align-items: center; }
+.mgrid.small .tile { font-size: 1rem; border-radius: 7px; border-width: 1px; }
+.mgrid.small .mrow { grid-template-columns: repeat(var(--len, 6), 1fr) 84px; }
+.mgrid.small .by {
+  font-size: 0.68rem;
+  color: var(--ink-dim);
+  padding-left: 8px;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mod-hint { text-align: center; color: var(--ink-dim); font-size: 0.78rem; margin: 12px 0 0; }
+
+@media (max-width: 480px) {
+  .mrow { gap: 5px; }
+  .tile { border-radius: 8px; border-width: 1px; }
+  .kb .key { padding: 10px 0; font-size: 0.82rem; border-radius: 7px; }
+  .kb .key.wide { font-size: 0.66rem; }
+  .mgrid.small .mrow { grid-template-columns: repeat(var(--len, 6), 1fr) 62px; }
+}

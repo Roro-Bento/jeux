@@ -1,0 +1,187 @@
+/* ============================================================
+   Pendu — papier, encre et bois
+   ============================================================ */
+
+body.theme-pendu {
+  --bg-0: #08070c;
+  --bg-1: #12101a;
+  --bg-2: #241d26;
+  --gold: #e3c08a;
+  --gold-soft: #fbe8c8;
+  --gold-deep: #96703c;
+  --teal: #7fd4c4;
+  --bad: #ff6f6f;
+  --good: #6fdc9b;
+  --ink: #efe9e2;
+  --ink-dim: #9a9089;
+  --panel: rgba(18, 16, 26, 0.93);
+  --panel-line: rgba(227, 192, 138, 0.22);
+
+  --decor-art:
+    radial-gradient(48% 40% at 16% 6%, rgba(227, 192, 138, 0.16), transparent 62%),
+    radial-gradient(42% 36% at 88% 92%, rgba(127, 212, 196, 0.12), transparent 62%),
+    linear-gradient(180deg, #241d26 0%, #12101a 45%, #08070c 100%);
+  --grid-line: rgba(227, 192, 138, 0.04);
+  --grid-step: 40px;
+}
+
+/* ---------------------------------------------------------------- bandeau */
+.pendu-hud { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.role-mini { font-size: 0.82rem; color: var(--ink-dim); text-align: right; }
+.role-mini b { color: var(--gold-soft); }
+
+/* -------------------------------------------------------------- la potence */
+.pendu-top {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+.gallows-wrap { flex: 0 0 auto; }
+.gallows { width: 132px; height: 162px; display: block; }
+.gallows .frame, .gallows .part {
+  fill: none;
+  stroke-width: 5;
+  stroke-linecap: round;
+}
+.gallows .frame { stroke: var(--gold-soft); opacity: 0.45; }
+.gallows .part {
+  stroke: var(--ink);
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+.gallows .part.on { opacity: 0.95; }
+.gallows.dead .part.on { stroke: var(--bad); }
+
+.pendu-side { display: flex; flex-direction: column; gap: 10px; min-width: 160px; }
+.lives { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+.life {
+  width: 11px; height: 11px; border-radius: 3px;
+  background: var(--good);
+  box-shadow: 0 0 8px rgba(111, 220, 155, 0.5);
+}
+.life.used { background: rgba(255, 255, 255, 0.13); box-shadow: none; }
+.life-lab {
+  width: 100%;
+  font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-dim);
+}
+.wrongs { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+.wr-lab {
+  width: 100%;
+  font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-dim);
+}
+.wr {
+  font-family: "Share Tech Mono", ui-monospace, monospace;
+  font-size: 0.9rem;
+  color: var(--bad);
+  padding: 1px 5px;
+  border-radius: 5px;
+  background: rgba(255, 111, 111, 0.12);
+  text-decoration: line-through;
+}
+
+/* ------------------------------------------------------------ le mot caché */
+.slots {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 7px;
+  flex-wrap: wrap;
+  margin: 6px 0 10px;
+}
+.slots .slot {
+  min-width: 26px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-bottom: 3px solid rgba(227, 192, 138, 0.45);
+  font-family: "Bebas Neue", Impact, sans-serif;
+  font-size: 1.9rem;
+  letter-spacing: 0.02em;
+  color: var(--gold-soft);
+}
+.slots .slot.filled { border-bottom-color: var(--gold); }
+.slots .sep { min-width: 14px; height: 40px; display: grid; place-items: center; color: var(--ink-dim); }
+#p-slots.pop .slot.filled { animation: slotpop 0.35s ease-out; }
+@keyframes slotpop {
+  0% { transform: translateY(6px) scale(0.85); opacity: 0.3; }
+  100% { transform: none; opacity: 1; }
+}
+
+.chooser-word {
+  text-align: center;
+  margin-top: 10px;
+  color: var(--ink-dim);
+  font-size: 0.95rem;
+}
+.chooser-word b {
+  color: var(--gold-soft);
+  font-size: 1.15rem;
+  letter-spacing: 0.06em;
+  margin: 0 6px;
+}
+.chooser-word .shh { font-size: 0.78rem; opacity: 0.7; }
+
+/* ---------------------------------------------------------------- clavier */
+.keyboard {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(38px, 1fr));
+  gap: 6px;
+  margin-top: 14px;
+}
+.key {
+  aspect-ratio: 1;
+  border-radius: 10px;
+  border: 1px solid rgba(227, 192, 138, 0.24);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--ink);
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s, transform 0.08s, opacity 0.12s;
+}
+.key:not([disabled]):hover { background: rgba(227, 192, 138, 0.2); border-color: var(--gold); }
+.key:not([disabled]):active { transform: scale(0.94); }
+.key[disabled] { cursor: default; }
+.key.hit { background: rgba(111, 220, 155, 0.18); border-color: rgba(111, 220, 155, 0.5); color: var(--good); }
+.key.miss { background: rgba(255, 111, 111, 0.12); border-color: rgba(255, 111, 111, 0.35); color: var(--bad); opacity: 0.6; }
+
+.entry { display: flex; gap: 10px; margin-top: 12px; }
+.entry input { flex: 1; }
+
+/* ------------------------------------------------------------- en attente */
+.waiting { text-align: center; padding: 26px 0; }
+.waiting p { margin: 6px 0; }
+.waiting .dots { display: flex; justify-content: center; gap: 7px; margin-bottom: 14px; }
+.waiting .dots i {
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--gold);
+  animation: blink 1.2s ease-in-out infinite;
+}
+.waiting .dots i:nth-child(2) { animation-delay: 0.15s; }
+.waiting .dots i:nth-child(3) { animation-delay: 0.3s; }
+@keyframes blink { 0%, 100% { opacity: 0.25; } 50% { opacity: 1; } }
+
+/* ------------------------------------------------------------------ récaps */
+.reveal-word {
+  text-align: center;
+  font-family: "Bebas Neue", Impact, sans-serif;
+  font-size: clamp(2rem, 10vw, 3.2rem);
+  letter-spacing: 0.1em;
+  margin: 4px 0 14px;
+}
+.reveal-word.ok { color: var(--good); }
+.reveal-word.ko { color: var(--bad); }
+
+.mod-hint { text-align: center; color: var(--ink-dim); font-size: 0.8rem; margin: 14px 0 0; }
+
+@media (max-width: 480px) {
+  .gallows { width: 106px; height: 130px; }
+  .pendu-side { min-width: 0; }
+  .keyboard { grid-template-columns: repeat(7, 1fr); gap: 5px; }
+  .key { font-size: 0.86rem; border-radius: 8px; }
+  .slots .slot { min-width: 20px; height: 34px; font-size: 1.5rem; }
+}
